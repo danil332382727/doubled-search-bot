@@ -1,14 +1,13 @@
 import asyncio
 import logging
+import os
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from aiogram.enums import ParseMode
 
-# === НАСТРОЙКИ ===
-BOT_TOKEN = "8768803904:AAG_AP1QVl1sbiE4OI4r1KPl7d614zr97Us"
-ADMIN_GROUP_ID = -1004342969244
-# ==================
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+ADMIN_GROUP_ID = int(os.getenv("ADMIN_GROUP_ID", "-1004342969244"))
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
@@ -84,8 +83,7 @@ async def handle_request(message: Message):
 @dp.callback_query(F.data == "taken")
 async def process_taken(callback: CallbackQuery):
     await callback.answer("Заявка взята в работу")
-    new_text = callback.message.caption or callback.message.text
-    new_text += "\n\n🟡 <b>Статус: В работе</b>"
+    new_text = (callback.message.caption or callback.message.text) + "\n\n🟡 <b>Статус: В работе</b>"
     
     if callback.message.photo:
         await callback.message.edit_caption(caption=new_text, parse_mode=ParseMode.HTML, reply_markup=request_keyboard())
@@ -95,8 +93,7 @@ async def process_taken(callback: CallbackQuery):
 @dp.callback_query(F.data == "closed")
 async def process_closed(callback: CallbackQuery):
     await callback.answer("Заявка закрыта")
-    new_text = callback.message.caption or callback.message.text
-    new_text += "\n\n✅ <b>Статус: Закрыта</b>"
+    new_text = (callback.message.caption or callback.message.text) + "\n\n✅ <b>Статус: Закрыта</b>"
     
     if callback.message.photo:
         await callback.message.edit_caption(caption=new_text, parse_mode=ParseMode.HTML, reply_markup=None)
