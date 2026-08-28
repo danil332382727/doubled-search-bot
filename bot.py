@@ -6,15 +6,8 @@ from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from aiogram.enums import ParseMode
 
-import os
-print("=== ВСЕ ПЕРЕМЕННЫЕ ОКЖЕНИЯ ===")
-for key, value in os.environ.items():
-    if "BOT" in key.upper() or "TOKEN" in key.upper() or "RAILWAY" in key.upper():
-        print(f"{key} = {value}")
-print("================================")
-
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-print("BOT_TOKEN =", BOT_TOKEN)
+# Токен прямо в коде
+BOT_TOKEN = "8768803904:AAHBB7IypN65IXC4SpWgTMK0tWHYXvlw58E"
 ADMIN_GROUP_ID = int(os.getenv("ADMIN_GROUP_ID", "-1004342969244"))
 
 bot = Bot(token=BOT_TOKEN)
@@ -52,19 +45,16 @@ async def handle_request(message: Message):
     user = message.from_user
     username = f"@{user.username}" if user.username else "нет юзернейма"
     user_link = f"<a href='tg://user?id={user.id}'>{user.full_name}</a>"
-
     caption = (
         f"<b>Новая заявка</b>\n\n"
         f"От: {user_link}\n"
         f"Юзернейм: {username}\n"
         f"ID: <code>{user.id}</code>\n\n"
     )
-
     if message.text and message.text != "Найти вещь":
         caption += f"Текст: {message.text}"
     else:
         caption += "Прислал фото"
-
     try:
         if message.photo:
             await bot.send_photo(
@@ -81,9 +71,7 @@ async def handle_request(message: Message):
                 parse_mode=ParseMode.HTML,
                 reply_markup=request_keyboard()
             )
-
         await message.answer("Принял, ищем.\nОтвет придёт тебе в личные сообщения в ближайшее время.")
-
     except Exception as e:
         await message.answer("Произошла ошибка, попробуй позже.")
         logging.error(f"Ошибка: {e}")
