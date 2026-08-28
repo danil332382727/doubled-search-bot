@@ -6,9 +6,15 @@ from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from aiogram.enums import ParseMode
 
-BOT_TOKEN = "8768803904:AAHBB7IypN65IXC4SpWgTMK0tWHYXvlw58E"
-print("=== ТОКЕН ЗАХАРДКОЖЕН ===")
-print("Токен =", BOT_TOKEN)
+import os
+print("=== ВСЕ ПЕРЕМЕННЫЕ ОКЖЕНИЯ ===")
+for key, value in os.environ.items():
+    if "BOT" in key.upper() or "TOKEN" in key.upper() or "RAILWAY" in key.upper():
+        print(f"{key} = {value}")
+print("================================")
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+print("BOT_TOKEN =", BOT_TOKEN)
 ADMIN_GROUP_ID = int(os.getenv("ADMIN_GROUP_ID", "-1004342969244"))
 
 bot = Bot(token=BOT_TOKEN)
