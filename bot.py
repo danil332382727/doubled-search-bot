@@ -6,8 +6,8 @@ from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from aiogram.enums import ParseMode
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-print("=== ПРОВЕРКА ТОКЕНА ===")
+BOT_TOKEN = "8768803904:AAHBB7IypN65IXC4SpWgTMK0tWHYXvlw58E"
+print("=== ТОКЕН ЗАХАРДКОЖЕН ===")
 print("Токен =", BOT_TOKEN)
 ADMIN_GROUP_ID = int(os.getenv("ADMIN_GROUP_ID", "-1004342969244"))
 
