@@ -7,6 +7,8 @@ from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKe
 from aiogram.enums import ParseMode
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
+print("=== ПРОВЕРКА ТОКЕНА ===")
+print("Токен =", BOT_TOKEN)
 ADMIN_GROUP_ID = int(os.getenv("ADMIN_GROUP_ID", "-1004342969244"))
 
 bot = Bot(token=BOT_TOKEN)
