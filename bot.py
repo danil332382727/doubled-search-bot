@@ -4,15 +4,20 @@ import os
 import time
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import CommandStart
-from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton, ReplyKeyboardMarkup
 from aiogram.enums import ParseMode
+from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 
 BOT_TOKEN = "8768803904:AAHBB7IypN65IXC4SpWgTMK0tWHYXvlw58E"
 ADMIN_GROUP_ID = int(os.getenv("ADMIN_GROUP_ID", "-1004342969244"))
 
-bot = Bot(token=BOT_TOKEN)
+# Включаем HTML по умолчанию для всех сообщений бота
+bot = Bot(
+    token=BOT_TOKEN, 
+    default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+)
 dp = Dispatcher()
 
 # Защита от спама (30 секунд)
@@ -105,8 +110,7 @@ async def find_item(message: Message, state: FSMContext):
     await state.set_state(SearchState.waiting_for_brand)
     await message.answer(
         "🏷 <b>Шаг 1 из 3:</b> Выберите бренд или нажмите «✏️ Другой бренд»:",
-        reply_markup=brand_keyboard(),
-        parse_mode=ParseMode.HTML
+        reply_markup=brand_keyboard()
     )
 
 @dp.callback_query(F.data == "back_to_brand")
@@ -114,8 +118,7 @@ async def back_to_brand(callback: CallbackQuery, state: FSMContext):
     await state.set_state(SearchState.waiting_for_brand)
     await callback.message.edit_text(
         "🏷 <b>Шаг 1 из 3:</b> Выберите бренд или нажмите «✏️ Другой бренд»:",
-        reply_markup=brand_keyboard(),
-        parse_mode=ParseMode.HTML
+        reply_markup=brand_keyboard()
     )
     await callback.answer()
 
@@ -142,8 +145,7 @@ async def process_brand(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_text(
         f"🏷 Бренд: <b>{selected_brand}</b>\n\n"
         "💰 <b>Шаг 2 из 3:</b> Укажите ваш бюджет:",
-        reply_markup=budget_keyboard(),
-        parse_mode=ParseMode.HTML
+        reply_markup=budget_keyboard()
     )
     await callback.answer()
 
@@ -156,8 +158,7 @@ async def process_custom_brand(message: Message, state: FSMContext):
     await message.answer(
         f"🏷 Бренд: <b>{selected_brand}</b>\n\n"
         "💰 <b>Шаг 2 из 3:</b> Укажите ваш бюджет:",
-        reply_markup=budget_keyboard(),
-        parse_mode=ParseMode.HTML
+        reply_markup=budget_keyboard()
     )
 
 @dp.callback_query(F.data == "back_to_budget")
@@ -169,8 +170,7 @@ async def back_to_budget(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_text(
         f"🏷 Бренд: <b>{brand}</b>\n\n"
         "💰 <b>Шаг 2 из 3:</b> Укажите ваш бюджет:",
-        reply_markup=budget_keyboard(),
-        parse_mode=ParseMode.HTML
+        reply_markup=budget_keyboard()
     )
     await callback.answer()
 
@@ -189,8 +189,7 @@ async def process_budget(callback: CallbackQuery, state: FSMContext):
     await callback.message.edit_text(
         f"💰 Бюджет: <b>{selected_budget}</b>\n\n"
         "📸 <b>Шаг 3 из 3:</b> Пришлите фото вещи или напишите её название, размер и описание:",
-        reply_markup=photo_desc_keyboard(),
-        parse_mode=ParseMode.HTML
+        reply_markup=photo_desc_keyboard()
     )
     await callback.answer()
 
@@ -224,21 +223,18 @@ async def handle_request(message: Message, state: FSMContext):
                 chat_id=ADMIN_GROUP_ID,
                 photo=message.photo[-1].file_id,
                 caption=caption,
-                parse_mode=ParseMode.HTML,
                 reply_markup=request_keyboard(user.id)
             )
         else:
             await bot.send_message(
                 chat_id=ADMIN_GROUP_ID,
                 text=caption,
-                parse_mode=ParseMode.HTML,
                 reply_markup=request_keyboard(user.id)
             )
         
         await message.answer(
             "✅ <b>Заявка принята!</b>\nМы уже ищем ваш вариант и скоро ответим вам в личные сообщения.",
-            reply_markup=main_keyboard(),
-            parse_mode=ParseMode.HTML
+            reply_markup=main_keyboard()
         )
     except Exception as e:
         await message.answer("Произошла ошибка при отправке заявки, попробуйте позже.", reply_markup=main_keyboard())
@@ -252,9 +248,9 @@ async def process_taken(callback: CallbackQuery):
     new_text = (callback.message.caption or callback.message.text) + "\n\n🟡 <b>Статус: В работе</b>"
     
     if callback.message.photo:
-        await callback.message.edit_caption(caption=new_text, parse_mode=ParseMode.HTML, reply_markup=request_keyboard(user_id))
+        await callback.message.edit_caption(caption=new_text, reply_markup=request_keyboard(user_id))
     else:
-        await callback.message.edit_text(text=new_text, parse_mode=ParseMode.HTML, reply_markup=request_keyboard(user_id))
+        await callback.message.edit_text(text=new_text, reply_markup=request_keyboard(user_id))
     
     await callback.answer("Заявка взята в работу")
 
@@ -262,7 +258,6 @@ async def process_taken(callback: CallbackQuery):
         await bot.send_message(
             chat_id=user_id,
             text="🟡 <b>Обновление по вашей заявке:</b>\nМенеджер взял ваш запрос в работу! Скоро свяжемся с вами."
-            parse_mode=ParseMode.HTML
         )
     except Exception as e:
         logging.error(f"Не удалось отправить ЛС пользователю {user_id}: {e}")
@@ -273,9 +268,9 @@ async def process_closed(callback: CallbackQuery):
     new_text = (callback.message.caption or callback.message.text) + "\n\n✅ <b>Статус: Закрыта</b>"
     
     if callback.message.photo:
-        await callback.message.edit_caption(caption=new_text, parse_mode=ParseMode.HTML, reply_markup=None)
+        await callback.message.edit_caption(caption=new_text, reply_markup=None)
     else:
-        await callback.message.edit_text(text=new_text, parse_mode=ParseMode.HTML, reply_markup=None)
+        await callback.message.edit_text(text=new_text, reply_markup=None)
     
     await callback.answer("Заявка закрыта")
 
@@ -283,7 +278,6 @@ async def process_closed(callback: CallbackQuery):
         await bot.send_message(
             chat_id=user_id,
             text="✅ <b>Ваша заявка обработана и закрыта.</b>\nСпасибо за обращение!"
-            parse_mode=ParseMode.HTML
         )
     except Exception as e:
         logging.error(f"Не удалось отправить ЛС пользователю {user_id}: {e}")
