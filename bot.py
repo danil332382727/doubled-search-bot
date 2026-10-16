@@ -262,6 +262,7 @@ async def process_taken(callback: CallbackQuery):
         await bot.send_message(
             chat_id=user_id,
             text="🟡 <b>Обновление по вашей заявке:</b>\nМенеджер взял ваш запрос в работу! Скоро свяжемся с вами."
+            parse_mode=ParseMode.HTML
         )
     except Exception as e:
         logging.error(f"Не удалось отправить ЛС пользователю {user_id}: {e}")
@@ -282,6 +283,7 @@ async def process_closed(callback: CallbackQuery):
         await bot.send_message(
             chat_id=user_id,
             text="✅ <b>Ваша заявка обработана и закрыта.</b>\nСпасибо за обращение!"
+            parse_mode=ParseMode.HTML
         )
     except Exception as e:
         logging.error(f"Не удалось отправить ЛС пользователю {user_id}: {e}")
