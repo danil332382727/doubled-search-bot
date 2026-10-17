@@ -10,7 +10,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 
-BOT_TOKEN = "8768803904:AAHBB7IypN65IXC4SpWgTMK0tWHYXvlw58E"
+BOT_TOKEN = "8768803904:AAFaIbshehANNTzG5kxhhKARv-sz39t2-ao"
 ADMIN_GROUP_ID = int(os.getenv("ADMIN_GROUP_ID", "-1004342969244"))
 
 # Включаем HTML по умолчанию для всех сообщений бота
